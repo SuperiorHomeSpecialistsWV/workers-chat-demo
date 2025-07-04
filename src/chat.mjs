@@ -59,6 +59,7 @@
 // serve our app's static asset without relying on any separate storage. (However, the space
 // available for assets served this way is very limited; larger sites should continue to use Workers
 // KV to serve assets.)
+// @ts-ignore
 import HTML from "./chat.html";
 
 // `handleErrors()` is a little utility function that can wrap an HTTP request handler in a
@@ -72,10 +73,12 @@ async function handleErrors(request, func) {
       // Annoyingly, if we return an HTTP error in response to a WebSocket request, Chrome devtools
       // won't show us the response body! So... let's send a WebSocket response with an error
       // frame instead.
+      // @ts-ignore
       let pair = new WebSocketPair();
       pair[1].accept();
       pair[1].send(JSON.stringify({error: err.stack}));
       pair[1].close(1011, "Uncaught exception during session setup");
+      // @ts-ignore
       return new Response(null, { status: 101, webSocket: pair[0] });
     } else {
       return new Response(err.stack, {status: 500});
@@ -270,12 +273,14 @@ export class ChatRoom {
           // response, and we operate on the other end. Note that this API is not part of the
           // Fetch API standard; unfortunately, the Fetch API / Service Workers specs do not define
           // any way to act as a WebSocket server today.
+          // @ts-ignore
           let pair = new WebSocketPair();
 
           // We're going to take pair[1] as our end, and return pair[0] to the client.
           await this.handleSession(pair[1], ip);
 
           // Now we return the other end of the pair to the client.
+          // @ts-ignore
           return new Response(null, { status: 101, webSocket: pair[0] });
         }
 
@@ -306,6 +311,7 @@ export class ChatRoom {
     // Queue "join" messages for all online users, to populate the client's roster.
     for (let otherSession of this.sessions.values()) {
       if (otherSession.name) {
+        // @ts-ignore
         session.blockedMessages.push(JSON.stringify({joined: otherSession.name}));
       }
     }
@@ -316,6 +322,7 @@ export class ChatRoom {
     let backlog = [...storage.values()];
     backlog.reverse();
     backlog.forEach(value => {
+      // @ts-ignore
       session.blockedMessages.push(value);
     });
   }
@@ -413,10 +420,12 @@ export class ChatRoom {
     }
   }
 
+  // @ts-ignore
   async webSocketClose(webSocket, code, reason, wasClean) {
     this.closeOrErrorHandler(webSocket)
   }
 
+  // @ts-ignore
   async webSocketError(webSocket, error) {
     this.closeOrErrorHandler(webSocket)
   }
@@ -467,6 +476,7 @@ export class ChatRoom {
 // global, i.e. they apply across all chat rooms, so if a user spams one chat room, they will find
 // themselves rate limited in all other chat rooms simultaneously.
 export class RateLimiter {
+  // @ts-ignore
   constructor(state, env) {
     // Timestamp at which this IP will next be allowed to send a message. Start in the distant
     // past, i.e. the IP can send a message now.
@@ -493,6 +503,7 @@ export class RateLimiter {
       // We provide a "grace" period of 20 seconds, meaning that the client can make 4-5 requests
       // in a quick burst before they start being limited.
       let cooldown = Math.max(0, this.nextAllowedTime - now - 20);
+      // @ts-ignore
       return new Response(cooldown);
     })
   }

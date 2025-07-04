@@ -1,7 +1,26 @@
 {
-  "name": "edge-chat-demo",
-  "description": "An edge chat service that runs on Cloudflare Workers using Durable Objects",
+  "name": "parsnip-chaos-falcon-aim",
   "version": "1.0.0",
-  "module": "./src/chat.mjs",
-  "private": true
+  "description": "Private AIM application with parsnip & chaos falcon theme",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler deploy",
+    "private": "true"
+  },
+  "dependencies": {
+    "98.css": "^0.1.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-draggable": "^4.5.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-react": "^7.22.0",
+    "babel-loader": "^9.1.0",
+    "css-loader": "^6.8.0",
+    "style-loader": "^3.3.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.0"
+  }
 }
