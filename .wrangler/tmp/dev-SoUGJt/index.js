@@ -1,8 +1,21 @@
 var __defProp = Object.defineProperty;
+/**
+ * Defines a property on the target object with the given name and value.
+ */
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
 // .wrangler/tmp/bundle-a7fhwL/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
+/**
+ * Checks if a given request URL has a custom HTTPS port and logs a warning if it does.
+ *
+ * This function examines the provided request to determine if it is an instance of URL or needs to be
+ * converted into one. It then checks if the URL uses a custom HTTPS port (not 443) and logs a warning
+ * message if such a configuration is detected and not already recorded in the `urls` set.
+ *
+ * @param {Request|string|URL} request - The request object or URL to be checked.
+ * @param {RequestInit} [init] - Optional initialization options for creating a Request object from a string.
+ */
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
     (typeof request === "string" ? new Request(request, init) : request).url
@@ -285,6 +298,19 @@ var ChatRoom = class {
 };
 
 // src/auth.js
+/**
+ * Handles authentication-related requests based on the path and HTTP method.
+ *
+ * This function routes incoming requests to specific handler functions:
+ * - POST /api/auth/login is routed to handleLogin.
+ * - POST /api/auth/register is routed to handleRegister.
+ * - POST /api/auth/logout is routed to handleLogout.
+ * If none of these conditions are met, it returns a 404 Not Found response.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param env - The environment object containing necessary utilities and configurations.
+ * @returns A Response object based on the handled request or a 404 response if no route matches.
+ */
 async function handleAuth(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -300,6 +326,16 @@ async function handleAuth(request, env) {
   return new Response("Not Found", { status: 404 });
 }
 __name(handleAuth, "handleAuth");
+/**
+ * Handles user login by verifying credentials and issuing a session token.
+ *
+ * This function processes the login request, checks user credentials against stored data,
+ * and returns a JSON response with either a session token on successful authentication or an error message.
+ *
+ * @param request - The incoming HTTP request object containing username and password.
+ * @param env - The environment object providing access to user data.
+ * @returns A Response object with JSON content indicating success or failure of the login attempt.
+ */
 async function handleLogin(request, env) {
   try {
     const { username, password } = await request.json();
@@ -336,6 +372,17 @@ async function handleLogin(request, env) {
   }
 }
 __name(handleLogin, "handleLogin");
+/**
+ * Handles user registration by validating input and storing new user data.
+ *
+ * This function processes a request to register a new user, validates the username and password,
+ * checks for existing usernames, and saves the new user information if all validations pass.
+ * It returns appropriate responses for successful registration, validation errors, or server issues.
+ *
+ * @param request - The incoming HTTP request object containing user credentials.
+ * @param env - An environment object providing necessary utilities like accessing stored users.
+ * @returns A Response object indicating success or failure with appropriate status codes and error messages.
+ */
 async function handleRegister(request, env) {
   try {
     const { username, password } = await request.json();
@@ -398,6 +445,16 @@ async function handleRegister(request, env) {
   }
 }
 __name(handleRegister, "handleRegister");
+/**
+ * Fetches user data from a durable object and returns it.
+ *
+ * This function retrieves user data by interacting with a durable object named "user-storage".
+ * It sends a request to "http://localhost/users" and processes the response.
+ * If the response is successful, it returns the list of users; otherwise,
+ * it falls back to returning default users. Errors during the process are logged to the console.
+ *
+ * @param {Object} env - The environment object containing the CHAT_ROOM module.
+ */
 async function getUsers(env) {
   try {
     const durableObjectId = env.CHAT_ROOM.idFromName("user-storage");
@@ -413,6 +470,9 @@ async function getUsers(env) {
   return getDefaultUsers();
 }
 __name(getUsers, "getUsers");
+/**
+ * Saves a list of users to a durable object via HTTP POST request.
+ */
 async function saveUsers(env, users) {
   try {
     const durableObjectId = env.CHAT_ROOM.idFromName("user-storage");
@@ -427,6 +487,9 @@ async function saveUsers(env, users) {
   }
 }
 __name(saveUsers, "saveUsers");
+/**
+ * Returns a default set of users with usernames and passwords.
+ */
 function getDefaultUsers() {
   return {
     "parsnip_lover": "chaos123",
@@ -435,6 +498,9 @@ function getDefaultUsers() {
   };
 }
 __name(getDefaultUsers, "getDefaultUsers");
+/**
+ * Handles user logout by returning a success response.
+ */
 async function handleLogout(request, env) {
   return new Response(JSON.stringify({ success: true }), {
     headers: {
@@ -478,6 +544,17 @@ var src_default = {
     return new Response("Not Found", { status: 404 });
   }
 };
+/**
+ * Handles requests for static files and serves HTML content with embedded JavaScript.
+ *
+ * This function checks if the requested path is `/static/bundle.js` and attempts to fetch it from a specified URL.
+ * If successful, it returns the asset with appropriate headers. If an error occurs or the asset is not found,
+ * it provides a fallback response. For any other paths, it serves an HTML page with embedded JavaScript that
+ * includes a loading screen and a fallback UI in case the React bundle fails to load.
+ *
+ * @param {Request} request - The incoming HTTP request object.
+ * @param {Env} env - The environment object containing necessary bindings like ASSETS.
+ */
 async function handleStaticFiles(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -712,6 +789,15 @@ var drainBody = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 var middleware_ensure_req_body_drained_default = drainBody;
 
 // C:/Users/nikki/.nvm/versions/node/v22.16.0/bin/node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts
+/**
+ * Reduces an error object to a simplified format.
+ *
+ * This function takes an error object `e` and returns a new object containing
+ * the error's name, message, stack trace, and optionally a reduced version of its cause.
+ * If the cause is present, it recursively reduces it using the same function.
+ *
+ * @param {Error} e - The error object to be reduced.
+ */
 function reduceError(e) {
   return {
     name: e?.name,
@@ -743,10 +829,16 @@ var middleware_insertion_facade_default = src_default;
 
 // C:/Users/nikki/.nvm/versions/node/v22.16.0/bin/node_modules/wrangler/templates/middleware/common.ts
 var __facade_middleware__ = [];
+/**
+ * Registers middleware by adding it to the facade middleware array.
+ */
 function __facade_register__(...args) {
   __facade_middleware__.push(...args.flat());
 }
 __name(__facade_register__, "__facade_register__");
+/**
+ * Invokes a middleware chain recursively.
+ */
 function __facade_invokeChain__(request, env, ctx, dispatch, middlewareChain) {
   const [head, ...tail] = middlewareChain;
   const middlewareCtx = {
@@ -758,6 +850,9 @@ function __facade_invokeChain__(request, env, ctx, dispatch, middlewareChain) {
   return head(request, env, ctx, middlewareCtx);
 }
 __name(__facade_invokeChain__, "__facade_invokeChain__");
+/**
+ * Invokes a middleware chain with an additional final middleware.
+ */
 function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
   return __facade_invokeChain__(request, env, ctx, dispatch, [
     ...__facade_middleware__,
@@ -784,6 +879,17 @@ var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
     this.#noRetry();
   }
 };
+/**
+ * Wraps an exported handler with middleware and event dispatchers.
+ *
+ * This function checks if there are any internal middleware defined in __INTERNAL_WRANGLER_MIDDLEWARE__.
+ * If so, it registers each middleware using __facade_register__. It then creates a fetchDispatcher to handle fetch requests.
+ * The function ensures the worker has a fetch method, throwing an error if not. Additionally, it defines a dispatcher
+ * for scheduled events and returns a new object that includes the original worker methods along with the enhanced fetch method.
+ *
+ * @param worker - An object representing the exported handler, expected to have a fetch method.
+ * @returns A new handler object with middleware and event handling capabilities.
+ */
 function wrapExportedHandler(worker) {
   if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
     return worker;
@@ -816,6 +922,16 @@ function wrapExportedHandler(worker) {
   };
 }
 __name(wrapExportedHandler, "wrapExportedHandler");
+/**
+ * Wraps the worker entrypoint class with middleware functionality.
+ *
+ * If no internal middleware is defined, it returns the original class unchanged.
+ * Otherwise, it registers each middleware and extends the input class to include
+ * fetch and dispatcher methods that handle request and scheduled events respectively.
+ *
+ * @param klass - The original Worker class to be wrapped.
+ * @returns A new class with added middleware functionality or the original class if no middleware is present.
+ */
 function wrapWorkerEntrypoint(klass) {
   if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
     return klass;
