@@ -1,5 +1,16 @@
 const urls = new Set();
 
+/**
+ * Checks if a given request URL has a custom port and logs a warning if it does.
+ *
+ * This function determines whether the provided request has a custom port other than 443
+ * and uses the HTTPS protocol. If such a condition is met, it checks if the URL has already
+ * been logged; if not, it adds the URL to a set and logs a warning about an issue with
+ * `fetch()` requests to custom HTTPS ports in published Workers.
+ *
+ * @param {Request|string} request - The request object or string URL to be checked.
+ * @param {Object} init - Optional initialization options for the Request if `request` is a string.
+ */
 function checkURL(request, init) {
 	const url =
 		request instanceof URL
