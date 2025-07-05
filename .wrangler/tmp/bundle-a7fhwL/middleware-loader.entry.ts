@@ -21,6 +21,9 @@ class __Facade_ScheduledController__ implements ScheduledController {
 		this.#noRetry = noRetry;
 	}
 
+	/**
+	 * Throws a TypeError if not invoked as an instance of __Facade_ScheduledController__ and calls the native #noRetry method immediately.
+	 */
 	noRetry() {
 		if (!(this instanceof __Facade_ScheduledController__)) {
 			throw new TypeError("Illegal invocation");
@@ -30,6 +33,16 @@ class __Facade_ScheduledController__ implements ScheduledController {
 	}
 }
 
+/**
+ * Wraps an exported handler with middleware functionality.
+ *
+ * This function checks if there are any defined middleware. If not, it returns the worker as is.
+ * Otherwise, it registers all middleware and wraps the worker's fetch method to include middleware invocation logic.
+ *
+ * @param worker - The original worker object containing handler functions.
+ * @returns A new worker object with enhanced fetch functionality that includes middleware processing.
+ * @throws Error If the worker does not export a fetch() function.
+ */
 function wrapExportedHandler(worker: ExportedHandler): ExportedHandler {
 	// If we don't have any middleware defined, just return the handler as is
 	if (
@@ -72,6 +85,17 @@ function wrapExportedHandler(worker: ExportedHandler): ExportedHandler {
 	};
 }
 
+/**
+ * Wraps a worker entrypoint constructor with middleware functionality.
+ *
+ * This function checks if there are any defined middleware and, if so,
+ * registers them once. It then extends the original klass to include
+ * fetch and dispatch methods that integrate with the middleware.
+ *
+ * @param klass - The worker entrypoint constructor to be wrapped.
+ * @returns A new WorkerEntrypointConstructor with middleware support.
+ * @throws Error If the entrypoint class does not define a fetch() function.
+ */
 function wrapWorkerEntrypoint(
 	klass: WorkerEntrypointConstructor
 ): WorkerEntrypointConstructor {
